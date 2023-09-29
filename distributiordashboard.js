@@ -38,18 +38,18 @@
 //--------------------------------------------------------------------------------------------------
 
 
-// const fs = require('fs');
-// const QRCode = require('qrcode');
+const fs = require('fs');
+const QRCode = require('qrcode');
 
-// // Data to be encoded in the QR code
-// const dataToEncode = 'this is data to encode kjdgdbg dkbfd'; // Change this to your desired data
+// Data to be encoded in the QR code
+const dataToEncode = 'this is data to encode kjdgdbg dkbfd'; // Change this to your desired data
 
-// // Generate the QR code as a data URL
-// QRCode.toDataURL(dataToEncode, (err, url) => {
-//   if (err) throw err;
+// Generate the QR code as a data URL
+QRCode.toDataURL(dataToEncode, (err, url) => {
+  if (err) throw err;
 
-//   // Save the QR code as an image file (optional)
-//   fs.writeFileSync('qrcode.png', Buffer.from(url.split(',')[1], 'base64'));
+  // Save the QR code as an image file (optional)
+  fs.writeFileSync('qrcode.png', Buffer.from(url.split(',')[1], 'base64'));
 
-//   console.log('QR code generated and saved as qrcode.png');
-// });
+  console.log('QR code generated and saved as qrcode.png');
+});

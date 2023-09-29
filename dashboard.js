@@ -77,3 +77,54 @@ function processInput() {
 console.log('Welcome to the Blockchain Terminal!');
 displayOptions();
 processInput();
+
+
+function buyProduct() {
+  if (admin.currentUser.userType !== 'client') {
+    console.log('Only clients can buy products.');
+    displayLoggedInOptions(admin.currentUser.userType);
+    processLoggedInInput(admin.currentUser.userType);
+    return;
+  }
+
+  rl.question('Enter the product ID you want to buy: ', (productId) => {
+    const product = productDistributionData.products.find((p) => p.id === parseInt(productId));
+
+    if (!product) {
+      console.log('Product not found.');
+      displayLoggedInOptions(admin.currentUser.userType);
+      processLoggedInInput(admin.currentUser.userType);
+      return;
+    }
+
+    if (product.quantity === 0) {
+      console.log(`${product.name} is out of stock.`);
+      displayLoggedInOptions(admin.currentUser.userType);
+      processLoggedInInput(admin.currentUser.userType);
+      return;
+    }
+
+    rl.question(`Enter the quantity of ${product.name} you want to buy: `, (quantity) => {
+      const client = admin.currentUser;
+
+      if (parseInt(quantity) > product.quantity) {
+        console.log(`Only ${product.quantity} ${product.name}(s) are available.`);
+        displayLoggedInOptions(admin.currentUser.userType);
+        processLoggedInInput(admin.currentUser.userType);
+        return;
+      }
+
+      // Update the product's quantity
+      product.quantity -= parseInt(quantity);
+
+      // Create a transaction for the purchase (you can modify the Transaction class accordingly)
+      const transaction = new Transaction(product.id, parseInt(quantity), client, 'manufacturer', client.keyPair.privateKey);
+      addTransaction(transaction);
+
+      console.log(`Transaction successful! You bought ${quantity} ${product.name}(s).`);
+      console.log(`Remaining stock of ${product.name}: ${product.quantity}`);
+      displayLoggedInOptions(admin.currentUser.userType);
+      processLoggedInInput(admin.currentUser.userType);
+    });
+  });
+}
