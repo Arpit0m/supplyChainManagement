@@ -38,18 +38,64 @@
 //--------------------------------------------------------------------------------------------------
 
 
-const fs = require('fs');
-const QRCode = require('qrcode');
+// const fs = require('fs');
+// const QRCode = require('qrcode');
 
-// Data to be encoded in the QR code
-const dataToEncode = 'this is data to encode kjdgdbg dkbfd'; // Change this to your desired data
+// // Data to be encoded in the QR code
+// const dataToEncode = 'this is data to encode kjdgdbg dkbfd'; // Change this to your desired data
 
-// Generate the QR code as a data URL
-QRCode.toDataURL(dataToEncode, (err, url) => {
-  if (err) throw err;
+// // Generate the QR code as a data URL
+// QRCode.toDataURL(dataToEncode, (err, url) => {
+//   if (err) throw err;
 
-  // Save the QR code as an image file (optional)
-  fs.writeFileSync('qrcode.png', Buffer.from(url.split(',')[1], 'base64'));
+//   // Save the QR code as an image file (optional)
+//   fs.writeFileSync('qrcode.png', Buffer.from(url.split(',')[1], 'base64'));
 
-  console.log('QR code generated and saved as qrcode.png');
-});
+//   console.log('QR code generated and saved as qrcode.png');
+// });
+
+class User {
+  constructor(username, usertype, coins) {
+    this.username = username;
+    this.usertype = usertype;
+    this.coins = coins;
+    this.stake = 0; // Initialize stake to 0
+  }
+}
+
+const candidates = [
+  new User('User1', 'miner', 1000),
+  new User('User2', 'miner', 1500),
+  new User('User3', 'miner', 800),
+  new User('User4', 'miner', 1200),
+];
+
+function DPoSVoting() {
+  // Calculate the total stake of all candidates
+  const totalStake = candidates.reduce((sum, user) => sum + user.coins, 0);
+
+  // Randomly select a number between 0 and the total stake
+  const randomStake = Math.random() * totalStake;
+
+  let currentStake = 0;
+  let selectedMiner = null;
+
+  // Iterate through candidates to find the miner based on their stakes
+  for (const candidate of candidates) {
+    currentStake += candidate.coins;
+    if (randomStake <= currentStake) {
+      selectedMiner = candidate;
+      break;
+    }
+  }
+
+  if (selectedMiner) {
+    console.log(`${selectedMiner.username} is the selected miner.`);
+  } else {
+    console.log('No miner selected.');
+  }
+}
+
+// Run the DPoS voting system
+DPoSVoting();
+

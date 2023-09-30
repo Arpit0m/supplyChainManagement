@@ -17,7 +17,8 @@ class Block {
     }
 
     // Hash each transaction using SHA-256.
-    let hashedTransactions = this.transactions.map(transaction => this.hash(transaction));
+    let transactionStr = this.transactions.map((transaction) => JSON.stringify(transaction));
+    let hashedTransactions = transactionStr.map(transaction => this.hash(transaction));
 
     // Calculate the Merkle root by recursively hashing pairs of transaction hashes.
     while (hashedTransactions.length > 1) {
