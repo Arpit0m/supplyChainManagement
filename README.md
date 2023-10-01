@@ -1,5 +1,6 @@
 # supplyChainManagement
-Blockchain based SCM system implementing DPoS
+Blockchain-based SCM system implementing DPoS
+
 # Blockchain Implementation Documentation
 
 ## Introduction
