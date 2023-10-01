@@ -205,7 +205,14 @@ const pendingTransactions = unverifiedTransactions.filter((transaction) => trans
             return;
           });
         }
- 
+        else if(admin.currentUser.userType==="client"){
+          unverifiedTransactions = unverifiedTransactions.filter((t) => t.signature !== selectedTransaction.signature);
+          verifiedTransactions.push(selectedTransaction);
+          
+          displayLoggedInOptions(admin.currentUser.userType);
+          processLoggedInInput(admin.currentUser.userType);
+          return;
+        }
  
         
         // Transaction is valid, remove it from unverified transactions
@@ -318,8 +325,7 @@ function addToVotingPool(){
 function DPoSVoting(){
   if(candidates.length === 0){
     console.log("Not enough delgates");
-    displayLoggedInOptions(admin.currentUser.userType);
-    processLoggedInInput(admin.currentUser.userType);
+    
     return;
   }
   
@@ -621,14 +627,12 @@ function processLoggedInInput(userType) {
           break;
         case '3':
           if(admin.currentUser.userType === 'client'){
-            raiseRequest();
+            complaintSolve();
           }else if(admin.currentUser.userType === 'manufacturer'){
             findDistributor();
-          }else if(admin.currentUser.userType === 'distributor'){
-            raiseRequest();      
           }
           
-          console.log('Option 3 selected.');
+          
           break;
         case '4':
           if(admin.currentUser.userType === 'client'){
@@ -679,6 +683,54 @@ function processLoggedInInput(userType) {
     });
   }
   
+function complaintSolve(){
+//   let wrong=true;
+// rl.question('enter TID ', (tidc) => {
+//   if(blockchain.chain.isValidChain()){
+//     let d1 = searchBlockChain(tidc);
+//     let d2 = searchVerifiedTransctions(tidc);
+//     let txn = d1.concat(d2);
+ 
+//     if(admin.currentUser==txn[0].client){
+//       console.log("you are wrong, you have received product")
+//     }
+ 
+//   }
+  
+// });
+rl.question('Enter Transaction ID (tid): ', (tid) => {
+  // Step 1: Retrieve all transactions related to the given tid in chronological order
+  const transactions = searchBlockChain(tid).concat(searchVerifiedTransctions(tid));
+  
+  if (transactions.length === 0) {
+    console.log('No transactions found for the given tid.');
+    displayLoggedInOptions(admin.currentUser.userType);
+    processLoggedInInput(admin.currentUser.userType);
+    return;
+  }
+ 
+  // Step 2: Check if transactions occurred in the correct order
+  let isOrderCorrect = true;
+  for (let i = 1; i < transactions.length; i++) {
+    if (transactions[i].sender !== transactions[i - 1].receiver) {
+      isOrderCorrect = false;
+      break;
+    }
+  }
+ 
+  // Step 3: Check if the last buyer is the client who raised the complaint
+  if (isOrderCorrect && transactions[transactions.length - 1].receiver === admin.currentUser.username) {
+    console.log('The client is wrong; they received the product.');
+  } else {
+    console.log('The client is correct; they did not receive the product.the dispatcher is lying / order is misplaced');
+  }
+ 
+displayLoggedInOptions(admin.currentUser.userType);
+processLoggedInInput(admin.currentUser.userType);
+});
+}
+ 
+ 
  
  
 function processInput() {
@@ -854,7 +906,7 @@ async function dispatchProductDistributor(transaction) {
       );
  
       for (let i = 0; i < distributors_global.length; i++) {
-        if (distributors_global[i][0].username === dispatcherName) {
+        if (distributors_global[i][0].username === admin.currentUser.username) {
           distributors_global[i][1] = true;
           break; // Exit the loop once found
         }
