@@ -126,8 +126,6 @@ The `Blockchain` class represents the blockchain itself and manages the blocks w
 14. Various User Interaction Functions:
     - Functions like `createNewUser()`, `createManufacturer()`, `login()`, `logout()`, `terminateProgram()`, `processInput()`, `processLoggedInInput()`, and others handle user interactions, such as creating users, logging in, and logging out.
 
-Please note that the documentation above provides an overview of each function's purpose and parameters. You may want to add more specific details and usage examples to your documentation as needed.
-
 
 
 ## Conclusion
